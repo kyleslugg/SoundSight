@@ -70,7 +70,58 @@ AuthController.handleCallback = (req, res, next) => {
     method: 'POST',
     headers: authHeaders,
     body: qs.stringify(authBody)
-  });
+  })
+    .then((result) => result.json())
+    .then((result) => {
+      env['AUTH_TOKEN'] = result.access_token;
+      env['REFRESH_TOKEN'] = result.refresh_token;
+      return next();
+    })
+    .catch((err) => {
+      return next(
+        createError({
+          method: 'handleCallback',
+          log: `Encountered error while requesting authorization token: ${err}`,
+          status: 500,
+          message: 'Something went wrong. Unable to authenticate.'
+        })
+      );
+    });
+};
+
+AuthController.refreshToken = (req, res, next) => {
+  const { REFRESH_TOKEN } = env;
+  const refreshBody = {
+    grant_type: 'refresh_token',
+    refresh_token: REFRESH_TOKEN
+  };
+  const refreshHeaders = {
+    Authorization:
+      'Basic ' +
+      Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64'),
+    'Content-Type': 'application/x-www-form-urlencoded'
+  };
+
+  fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    headers: refreshHeaders,
+    body: qs.stringify(refreshBody)
+  })
+    .then((resp) => resp.json())
+    .then((resp) => {
+      env['ACCESS_TOKEN'] = resp.access_token;
+      return next();
+    })
+    .catch((err) => {
+      return next(
+        createError({
+          method: 'refreshToken',
+          log: `Encountered error while refreshing authorization token: ${err}`,
+          status: 500,
+          message: 'Something went wrong. Unable to authenticate.'
+        })
+      );
+    });
 };
 
 export default AuthController;
