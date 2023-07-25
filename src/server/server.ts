@@ -28,7 +28,7 @@ app.use('/auth', AuthenticationRouter);
 
 app.use(ViteExpress.static());
 
-app.use(express.static(url.resolve(__dirname, '../assets')));
+app.use('/assets', express.static(url.resolve(__dirname, '../assets')));
 
 // app.get('/*', (req, res) => {
 //   res.render(url.resolve(__dirname, '../../views/index.html.ejs'));

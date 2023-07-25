@@ -11,6 +11,8 @@ const createError = (err: MiddlewareErrorCreator) => {
 
 const SpotifyController: MiddlewareController = {};
 
+SpotifyController.getUserInfo = (req, res, next) => {};
+
 SpotifyController.getTop = (req, res, next) => {
   const { type } = req.params;
   if (!type || (type !== 'artists' && type !== 'tracks')) {
@@ -23,10 +25,12 @@ SpotifyController.getTop = (req, res, next) => {
     );
   }
 
+  const { access_token } = req.cookies;
+  console.log(access_token);
   fetch(`https://api.spotify.com/v1/me/top/${type}`, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.AUTH_TOKEN}`
+      Authorization: `Bearer ${access_token}`
     }
   })
     //.then((resp) => resp.json())

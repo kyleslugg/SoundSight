@@ -3,6 +3,8 @@ import { MiddlewareController, MiddlewareErrorCreator } from '../../types';
 import { generateRandomString } from '../utilities/utils.ts';
 
 const STATE_KEY = 'spotify_state';
+const scope =
+  'user-read-private user-read-email user-top-read user-read-recently-played user-library-read';
 
 const createError = (err: MiddlewareErrorCreator) => {
   const thisMessage = err.message ? err.message : err.log;
@@ -22,8 +24,6 @@ AuthController.initiateOauthLogin = (req, res, next) => {
   const state = generateRandomString(16);
   res.cookie(STATE_KEY, state);
 
-  const scope = 'user-read-private user-read-email';
-
   res.redirect(
     'https://accounts.spotify.com/authorize?' +
       qs.stringify({
@@ -37,11 +37,14 @@ AuthController.initiateOauthLogin = (req, res, next) => {
 };
 
 AuthController.handleCallback = (req, res, next) => {
+  console.log('Reached callback path...')
   const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = process.env;
 
   const code = req.query.code || null;
   const state = req.query.state || null;
   const storedState = req.cookies ? req.cookies[STATE_KEY] : null;
+
+  console.log(`Code: ${code}\nState: ${state}\nStoredState: ${storedState}`);
 
   if (!state || state !== storedState) {
     return next(
@@ -76,8 +79,8 @@ AuthController.handleCallback = (req, res, next) => {
   })
     .then((result) => result.json())
     .then((result) => {
-      process.env['AUTH_TOKEN'] = result.access_token;
-      process.env['REFRESH_TOKEN'] = result.refresh_token;
+      res.cookie('access_token', result.access_token);
+      res.cookie('refresh_token', result.refresh_token);
       return next();
     })
     .catch((err) => {
@@ -93,7 +96,8 @@ AuthController.handleCallback = (req, res, next) => {
 };
 
 AuthController.refreshToken = (req, res, next) => {
-  const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN } = process.env;
+  const { CLIENT_ID, CLIENT_SECRET } = process.env;
+  const { REFRESH_TOKEN } = req.cookies;
 
   const refreshBody = {
     grant_type: 'refresh_token',
@@ -112,8 +116,9 @@ AuthController.refreshToken = (req, res, next) => {
     body: qs.stringify(refreshBody)
   })
     .then((resp) => resp.json())
-    .then((resp) => {
-      process.env['ACCESS_TOKEN'] = resp.access_token;
+    .then((result) => {
+      res.cookie('access_token', result.access_token);
+      res.cookie('refresh_token', result.refresh_token);
       return next();
     })
     .catch((err) => {
@@ -126,6 +131,23 @@ AuthController.refreshToken = (req, res, next) => {
         })
       );
     });
+};
+
+AuthController.checkAuth = (req, res, next) => {
+  const { access_token } = req.cookies;
+
+  if (!access_token) {
+    res.clearCookie(STATE_KEY);
+    res.clearCookie('refresh_token');
+    res.status(403).redirect('/');
+  }
+};
+
+AuthController.logout = (req, res, next) => {
+  res.clearCookie('access_token');
+  res.clearCookie('refresh_token');
+  res.clearCookie(STATE_KEY);
+  return next();
 };
 
 export default AuthController;
