@@ -22,7 +22,7 @@ AuthenticationRouter.get(
 );
 
 AuthenticationRouter.get('/logout', AuthController.logout, (req, res) => {
-  res.status(200).redirect('/');
+  res.redirect('/');
 });
 
 export default AuthenticationRouter;

@@ -2,7 +2,11 @@ import { Card, Button } from '@mui/material';
 
 export default function Login() {
   const handleOauth = () => {
-    fetch('/auth/login', { mode: 'no-cors' })
+    fetch('/auth/login', {
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      }
+    })
       .then((resp) => {
         console.dir(resp);
       })
@@ -13,7 +17,9 @@ export default function Login() {
   return (
     <Card>
       <h2>Login with Spotify</h2>
-      <Button className="spotify-button" onClick={handleOauth}></Button>
+      <a href="/auth/login">
+        <Button className="spotify-button"></Button>
+      </a>
     </Card>
   );
 }

@@ -37,13 +37,13 @@ AuthController.initiateOauthLogin = (req, res, next) => {
 };
 
 AuthController.handleCallback = (req, res, next) => {
-  console.log('Reached callback path...')
+  console.log('Reached callback path...');
   const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = process.env;
 
   const code = req.query.code || null;
   const state = req.query.state || null;
   const storedState = req.cookies ? req.cookies[STATE_KEY] : null;
-
+  console.log(req.cookies);
   console.log(`Code: ${code}\nState: ${state}\nStoredState: ${storedState}`);
 
   if (!state || state !== storedState) {

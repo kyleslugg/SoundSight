@@ -13,6 +13,8 @@ function App() {
   useEffect(() => {
     if (cookies.access_token) {
       setAuthorized(true);
+    } else {
+      setAuthorized(false);
     }
   }, []);
 

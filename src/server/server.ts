@@ -1,5 +1,5 @@
 import express, { Request, Response, Errback, NextFunction } from 'express';
-import ViteExpress from 'vite-express';
+import cookies from 'cookie-parser';
 import SpotifyRouter from './routes/spotifyRouter.ts';
 import { configDotenv } from 'dotenv';
 import * as url from 'url';
@@ -21,12 +21,13 @@ export const app = express();
 //   })
 //   app.listen(process.env['PORT'])
 // }
+app.use(cookies());
 
 app.use('/spotify', SpotifyRouter);
 
 app.use('/auth', AuthenticationRouter);
 
-app.use(ViteExpress.static());
+//app.use(ViteExpress.static());
 
 app.use('/assets', express.static(url.resolve(__dirname, '../assets')));
 
