@@ -1,10 +1,8 @@
-import { env } from 'node:process';
 import qs from 'node:querystring';
 import { MiddlewareController, MiddlewareErrorCreator } from '../../types';
-import { generateRandomString } from '../utilities/utils';
+import { generateRandomString } from '../utilities/utils.ts';
 
 const STATE_KEY = 'spotify_state';
-const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = env;
 
 const createError = (err: MiddlewareErrorCreator) => {
   const thisMessage = err.message ? err.message : err.log;
@@ -18,6 +16,8 @@ const createError = (err: MiddlewareErrorCreator) => {
 const AuthController: MiddlewareController = {};
 
 AuthController.initiateOauthLogin = (req, res, next) => {
+  const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = process.env;
+
   //Set random key from which token will be seeded
   const state = generateRandomString(16);
   res.cookie(STATE_KEY, state);
@@ -37,6 +37,8 @@ AuthController.initiateOauthLogin = (req, res, next) => {
 };
 
 AuthController.handleCallback = (req, res, next) => {
+  const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = process.env;
+
   const code = req.query.code || null;
   const state = req.query.state || null;
   const storedState = req.cookies ? req.cookies[STATE_KEY] : null;
@@ -69,12 +71,13 @@ AuthController.handleCallback = (req, res, next) => {
   fetch('https://accounts.spotify.com/api/token', {
     method: 'POST',
     headers: authHeaders,
+    //@ts-ignore
     body: qs.stringify(authBody)
   })
     .then((result) => result.json())
     .then((result) => {
-      env['AUTH_TOKEN'] = result.access_token;
-      env['REFRESH_TOKEN'] = result.refresh_token;
+      process.env['AUTH_TOKEN'] = result.access_token;
+      process.env['REFRESH_TOKEN'] = result.refresh_token;
       return next();
     })
     .catch((err) => {
@@ -90,7 +93,8 @@ AuthController.handleCallback = (req, res, next) => {
 };
 
 AuthController.refreshToken = (req, res, next) => {
-  const { REFRESH_TOKEN } = env;
+  const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN } = process.env;
+
   const refreshBody = {
     grant_type: 'refresh_token',
     refresh_token: REFRESH_TOKEN
@@ -109,7 +113,7 @@ AuthController.refreshToken = (req, res, next) => {
   })
     .then((resp) => resp.json())
     .then((resp) => {
-      env['ACCESS_TOKEN'] = resp.access_token;
+      process.env['ACCESS_TOKEN'] = resp.access_token;
       return next();
     })
     .catch((err) => {

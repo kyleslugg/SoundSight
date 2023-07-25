@@ -1,35 +1,31 @@
-import express, { Request, Response, Errback, NextFunction } from 'express';
+import express, { Request, Response, Errback } from 'express';
 import SpotifyRouter from './routes/spotifyRouter.ts';
 import { configDotenv } from 'dotenv';
-import setSession from './utilities/setSession.ts';
 import * as url from 'url';
+import AuthenticationRouter from './routes/authRouter.ts';
+
+configDotenv();
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-
-configDotenv();
-setSession();
 
 const PORT = 3000;
 const app = express();
 
 app.use('/spotify', SpotifyRouter);
 
+app.use('/auth', AuthenticationRouter);
+
 app.use(express.static(url.resolve(__dirname, '../assets')));
 
-app.get('/home', (req, res) => {
-  res.sendFile(url.resolve(__dirname, '../../index.html'));
-});
-
 // Catch-all error handler
-
 app.use('*', (req: Request, res: Response) => {
   return res.status(404).send("This is not the page you're looking for...");
 });
 
 // Global error handling middleware
 
-app.use((err: Errback, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Errback, req: Request, res: Response) => {
   const defaultErr = {
     log: 'Express error handler caught unknown middleware error',
     status: 400,

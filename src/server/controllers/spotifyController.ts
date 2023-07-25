@@ -1,4 +1,3 @@
-import { RequestHandler } from 'express';
 import { MiddlewareController, MiddlewareErrorCreator } from '../../types';
 
 const createError = (err: MiddlewareErrorCreator) => {
