@@ -95,51 +95,49 @@ AuthController.handleCallback = (req, res, next) => {
     });
 };
 
-AuthController.refreshToken = (req, res, next) => {
-  const { CLIENT_ID, CLIENT_SECRET } = process.env;
-  const { REFRESH_TOKEN } = req.cookies;
-
-  const refreshBody = {
-    grant_type: 'refresh_token',
-    refresh_token: REFRESH_TOKEN
-  };
-  const refreshHeaders = {
-    Authorization:
-      'Basic ' +
-      Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64'),
-    'Content-Type': 'application/x-www-form-urlencoded'
-  };
-
-  fetch('https://accounts.spotify.com/api/token', {
-    method: 'POST',
-    headers: refreshHeaders,
-    body: qs.stringify(refreshBody)
-  })
-    .then((resp) => resp.json())
-    .then((result) => {
-      res.cookie('access_token', result.access_token);
-      res.cookie('refresh_token', result.refresh_token);
-      return next();
-    })
-    .catch((err) => {
-      return next(
-        createError({
-          method: 'refreshToken',
-          log: `Encountered error while refreshing authorization token: ${err}`,
-          status: 500,
-          message: 'Something went wrong. Unable to authenticate.'
-        })
-      );
-    });
-};
-
 AuthController.checkAuth = (req, res, next) => {
-  const { access_token } = req.cookies;
+  const { access_token, refresh_token } = req.cookies;
+  const { CLIENT_ID, CLIENT_SECRET } = process.env;
 
-  if (!access_token) {
-    res.clearCookie(STATE_KEY);
-    res.clearCookie('refresh_token');
-    res.status(403).redirect('/');
+  if (access_token) return next();
+  else if (refresh_token) {
+    const refreshBody = {
+      grant_type: 'refresh_token',
+      refresh_token: refresh_token
+    };
+    const refreshHeaders = {
+      Authorization:
+        'Basic ' +
+        Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64'),
+      'Content-Type': 'application/x-www-form-urlencoded'
+    };
+
+    fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: refreshHeaders,
+      body: qs.stringify(refreshBody)
+    })
+      .then((resp) => resp.json())
+      .then((result) => {
+        res.cookie('access_token', result.access_token, {
+          maxAge: result.expires_in * 1000
+        });
+        req.cookies['access_token'] = result.access_token;
+
+        return next();
+      })
+      .catch((err) => {
+        return next(
+          createError({
+            method: 'refreshToken',
+            log: `Encountered error while refreshing authorization token: ${err}`,
+            status: 500,
+            message: 'Something went wrong. Unable to authenticate.'
+          })
+        );
+      });
+  } else {
+    res.status(403).redirect('back');
   }
 };
 

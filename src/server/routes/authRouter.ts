@@ -13,14 +13,6 @@ AuthenticationRouter.get(
   }
 );
 
-AuthenticationRouter.get(
-  '/refresh',
-  AuthController.refreshToken,
-  (req, res) => {
-    return res.redirect('back');
-  }
-);
-
 AuthenticationRouter.get('/logout', AuthController.logout, (req, res) => {
   return res.redirect('back');
 });

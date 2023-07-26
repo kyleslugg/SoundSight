@@ -7,8 +7,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/auth': 'http://localhost:3000/auth',
-      '/spotify': 'http://localhost:3000/spotify'
+      '/auth': 'http://localhost:3000/',
+      '/spotify': 'http://localhost:3000/'
     }
   }
 });
