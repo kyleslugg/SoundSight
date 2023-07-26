@@ -4,5 +4,11 @@ import express from './express-plugin';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), express('src/server/server.ts')]
+  plugins: [react()],
+  server: {
+    proxy: {
+      '/auth': 'http://localhost:3000/auth',
+      '/spotify': 'http://localhost:3000/spotify'
+    }
+  }
 });

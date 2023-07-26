@@ -1,4 +1,10 @@
-import express, { Request, Response, Errback, NextFunction } from 'express';
+import express, {
+  Request,
+  Response,
+  Errback,
+  NextFunction,
+  json
+} from 'express';
 import cookies from 'cookie-parser';
 import SpotifyRouter from './routes/spotifyRouter.ts';
 import { configDotenv } from 'dotenv';
@@ -22,6 +28,8 @@ export const app = express();
 //   app.listen(process.env['PORT'])
 // }
 app.use(cookies());
+
+app.use(json());
 
 app.use('/spotify', SpotifyRouter);
 
@@ -53,8 +61,8 @@ app.use((err: Errback, req: Request, res: Response, next: NextFunction) => {
   return res.status(errorObj.status).json(errorObj.message);
 });
 
-// ViteExpress.listen(app, PORT, () => {
-//   console.log(`Server listening on port ${PORT}`);
-// });
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
 
 export default app;

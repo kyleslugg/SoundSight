@@ -1,4 +1,4 @@
-export const generateRandomString = function (length: number) {
+export const generateRandomString = (length: number) => {
   var text = '';
   var possible =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -8,3 +8,12 @@ export const generateRandomString = function (length: number) {
   }
   return text;
 };
+
+const sessionUIDGen = () => {
+  let counter = 10000;
+  return () => {
+    return counter++;
+  };
+};
+
+export const getSessionUID = sessionUIDGen();

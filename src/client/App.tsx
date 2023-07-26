@@ -2,6 +2,7 @@ import { Container, Card, Button } from '@mui/material';
 
 import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
+import { exchangeToken } from './utils/authUtils';
 import './App.scss';
 import Login from './pages/login';
 import Home from './pages/home';
@@ -11,7 +12,8 @@ function App() {
   const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
-    if (cookies.access_token) {
+    if (cookies.refresh_token) {
+      exchangeToken();
       setAuthorized(true);
     } else {
       setAuthorized(false);

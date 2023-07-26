@@ -24,7 +24,7 @@ AuthController.initiateOauthLogin = (req, res, next) => {
   const state = generateRandomString(16);
   res.cookie(STATE_KEY, state);
 
-  res.redirect(
+  return res.redirect(
     'https://accounts.spotify.com/authorize?' +
       qs.stringify({
         response_type: 'code',
