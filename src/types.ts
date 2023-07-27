@@ -58,7 +58,6 @@ export type PlaylistInfo = {
   description: string;
   href: string;
   id: string;
-  images: OptionalInfoElement;
   owner: UserInfo;
   public: boolean;
   tracks?: { href: string; total: number };
