@@ -16,6 +16,10 @@ import {
 } from '@mui/material';
 import { ArrowForwardIos, ArrowBackIos } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setUser } from '../store/slices/userSlice';
+import { setTopTracks, setTopArtists } from '../store/slices/trackSlice';
+import { RootState } from '../store/store';
 import { TrackInfo, UserInfo, ArtistInfo } from '../../types';
 import { BrowserRouter, Route, Routes, Link } from 'react-router-dom';
 import TopTracks from '../components/topTracks';
@@ -24,29 +28,34 @@ import { ToggleableDrawer } from '../components/navigationDrawer';
 
 const drawerWidth = 240;
 
+/**
+ * The Home function is the main component of the application, responsible for rendering the navigation bar, the toggleable drawer, and the content of the pages. It also fetches the user's top tracks and user information from the Spotify API and dispatches them to the Redux store.
+ *
+ * @returns {ReactElement} The rendered toggleable drawer, navigation bar, and content of the pages.
+ */
 export default function Home() {
-  const [user, setUser] = useState<UserInfo | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [currDrawerWidth, setCurrDrawerWidth] = useState(0);
-  const [mobile, setMobile] = useState(false);
-  const [topTracks, setTopTracks] = useState<TrackInfo[]>([]);
-  const [topArtists, setTopArtists] = useState<ArtistInfo[]>([]);
 
-  const toggleDrawer = (event: React.MouseEvent) => {
+  const user: UserInfo = useSelector(
+    (state: RootState) => state.userSlice.userInfo
+  );
+
+  const topTracks: TrackInfo[] = useSelector(
+    (state: RootState) => state.trackSlice.topTracks
+  );
+
+  const topArtists = useSelector(
+    (state: RootState) => state.trackSlice.topArtists
+  );
+
+  const dispatch = useDispatch();
+
+  const toggleDrawer = () => {
     const nextState = !drawerOpen;
     setDrawerOpen(nextState);
     setCurrDrawerWidth(nextState ? drawerWidth : 0);
   };
-
-  /** 
-   * const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  */
 
   const getTop = (type: 'tracks' | 'artists') => {
     fetch('/spotify/top/' + type, {
@@ -56,9 +65,9 @@ export default function Home() {
       .then((resp) => {
         console.log(resp);
         if (type === 'tracks') {
-          setTopTracks(resp);
+          dispatch(setTopTracks(resp));
         } else {
-          setTopArtists(resp);
+          dispatch(setTopArtists(resp));
         }
       });
   };
@@ -70,7 +79,7 @@ export default function Home() {
       .then((res) => res.json())
       .then((resp) => {
         console.log('User Resp:', resp);
-        setUser(resp);
+        dispatch(setUser(resp));
       })
       .catch((e) => {
         if (e.status === 401 || e.status === 403) {
