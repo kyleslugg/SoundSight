@@ -5,6 +5,15 @@ import AuthController from '../controllers/authController.ts';
 const SpotifyRouter = Router();
 
 SpotifyRouter.get(
+  '/user',
+  AuthController.checkAuth,
+  SpotifyController.getUserInfo,
+  (req, res) => {
+    return res.status(200).json(res.locals.response);
+  }
+);
+
+SpotifyRouter.get(
   '/top/:type',
   AuthController.checkAuth,
   SpotifyController.getTop,
@@ -14,12 +23,11 @@ SpotifyRouter.get(
 );
 
 SpotifyRouter.get(
-  '/user',
+  '/playlists/:userId',
   AuthController.checkAuth,
-  SpotifyController.getUserInfo,
+  SpotifyController.getUserPlaylists,
   (req, res) => {
-    return res.status(200).json(res.locals.response);
+    return res.status(200).json(res.locals.playlistData);
   }
 );
-
 export default SpotifyRouter;

@@ -96,6 +96,7 @@ SpotifyController.getTop = (req, res, next) => {
  */
 SpotifyController.getUserPlaylists = (req, res, next) => {
   const { userId } = req.params;
+  const { access_token } = req.cookies;
 
   // Check if user ID is provided
   if (!userId) {
@@ -109,8 +110,13 @@ SpotifyController.getUserPlaylists = (req, res, next) => {
   }
 
   // Fetch user's playlists from Spotify API
-  fetch(`https://api.spotify.com/v1/users/${userId}/playlists`)
-    .then((resp) => processPlaylistResponse(resp))
+  fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${access_token}`
+    }
+  })
+    .then((resp) => processPlaylistResponse(resp, access_token))
     .then((resp) => {
       // Store processed playlist data in response object
       res.locals.playlistData = resp;
