@@ -19,11 +19,13 @@ import { useEffect, useState } from 'react';
 import { TrackInfo, UserInfo, ArtistInfo } from '../../types';
 import { BrowserRouter, Route, Routes, Link } from 'react-router-dom';
 import TopTracks from '../components/topTracks';
+import { ResponsiveDrawer } from '../components/navigationDrawer';
 
 const drawerWidth = 240;
 
 export default function Home() {
   const [user, setUser] = useState<UserInfo | null>(null);
+  const [mobile, setMobile] = useState(false);
   const [topTracks, setTopTracks] = useState<TrackInfo[]>([]);
   const [topArtists, setTopArtists] = useState<ArtistInfo[]>([]);
 
@@ -97,63 +99,38 @@ export default function Home() {
             }}
           >
             <Toolbar>
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                sx={{ mr: 2 }}
-              >
-                <MenuIcon />
-              </IconButton>
+              {mobile && (
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  sx={{ mr: 2 }}
+                >
+                  <MenuIcon />
+                </IconButton>
+              )}
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                <h1>Welcome{user ? `, ${user.id}` : '!'}</h1>
+                Welcome{user ? `, ${user.id}` : '!'}
               </Typography>
               <Button onClick={handleLogout}>Log Out</Button>
             </Toolbar>
           </AppBar>
-          <Drawer
-            sx={{
-              width: drawerWidth,
-              flexShrink: 0,
-              '& .MuiDrawer-paper': {
-                width: drawerWidth,
-                boxSizing: 'border-box'
-              }
-            }}
-            variant="permanent"
-            anchor="left"
-          >
-            <Toolbar />
-            <Divider />
-            <List>
-              <ListItem key={'home'} disablePadding>
-                <Link to="/">
-                  <ListItemButton>
-                    <ListItemText primary="Home" />
-                  </ListItemButton>
-                </Link>
-              </ListItem>
-              <ListItem key={'topTracks'} disablePadding>
-                <Link to="/topTracks">
-                  <ListItemButton>
-                    <ListItemText primary="Top Tracks" />
-                  </ListItemButton>
-                </Link>
-              </ListItem>
-            </List>
-          </Drawer>
+          <ResponsiveDrawer drawerWidth={drawerWidth} />
 
-          <Routes>
-            <Route
-              path="/"
-              element={<TopTracks displayLength={20} tracks={topTracks} />}
-            />
-            <Route
-              path="topTracks"
-              element={<TopTracks displayLength={20} tracks={topTracks} />}
-            />
-          </Routes>
+          <Box>
+            <Toolbar />
+            <Routes>
+              <Route
+                path="/"
+                element={<TopTracks displayLength={20} tracks={topTracks} />}
+              />
+              <Route
+                path="topTracks"
+                element={<TopTracks displayLength={20} tracks={topTracks} />}
+              />
+            </Routes>
+          </Box>
         </CssBaseline>
       </Box>
     </BrowserRouter>

@@ -1,4 +1,6 @@
 import { Container, Card, Button } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
+import { KSUTheme } from './styles/MUITheme';
 
 import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
@@ -19,10 +21,12 @@ function App() {
   }, [cookies]);
 
   return (
-    <Container maxWidth="small">
-      {!authorized && <Login />}
-      {authorized && <Home />}
-    </Container>
+    <ThemeProvider theme={KSUTheme}>
+      <Container maxWidth="small">
+        {!authorized && <Login />}
+        {authorized && <Home />}
+      </Container>
+    </ThemeProvider>
   );
 }
 

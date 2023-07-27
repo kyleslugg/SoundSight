@@ -1,4 +1,4 @@
-import { List, Card } from '@mui/material';
+import { List, Card, Typography, Box } from '@mui/material';
 import { TrackInfo } from '../../types';
 import Track from './track';
 import { getSessionUID } from '../../server/utilities/utils';
@@ -12,8 +12,10 @@ export default function TopTracks(props: {
     tracks.length >= displayLength ? tracks.slice(0, displayLength) : tracks;
 
   return (
-    <Card>
-      <h2>Top Tracks:</h2>
+    <Box>
+      <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        Top Tracks
+      </Typography>
       <List>
         {displayTracks.map((item) => (
           <div key={getSessionUID()}>
@@ -22,6 +24,6 @@ export default function TopTracks(props: {
           </div>
         ))}
       </List>
-    </Card>
+    </Box>
   );
 }
