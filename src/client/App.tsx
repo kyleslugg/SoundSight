@@ -8,6 +8,10 @@ import './App.scss';
 import Login from './pages/login';
 import Home from './pages/home';
 
+/**
+ * Renders the 'Login' or 'Home' component based on the user's authorization status.
+ * Checks for the presence of a refresh token in cookies to determine authorization.
+ */
 function App() {
   const [cookies, setCookies] = useCookies();
   const [authorized, setAuthorized] = useState(false);
@@ -22,10 +26,8 @@ function App() {
 
   return (
     <ThemeProvider theme={KSUTheme}>
-      <Container maxWidth="small">
-        {!authorized && <Login />}
-        {authorized && <Home />}
-      </Container>
+      {!authorized && <Login />}
+      {authorized && <Home />}
     </ThemeProvider>
   );
 }

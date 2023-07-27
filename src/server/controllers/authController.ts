@@ -4,7 +4,7 @@ import { generateRandomString } from '../utilities/utils.ts';
 
 const STATE_KEY = 'spotify_state';
 const scope =
-  'user-read-private user-read-email user-top-read user-read-recently-played user-library-read';
+  'user-read-private user-read-email user-top-read user-read-recently-played user-library-read playlist-read-private playlist-read-collaborative';
 
 const createError = (err: MiddlewareErrorCreator) => {
   const thisMessage = err.message ? err.message : err.log;
@@ -17,10 +17,18 @@ const createError = (err: MiddlewareErrorCreator) => {
 
 const AuthController: MiddlewareController = {};
 
+/**
+ * Initiates the OAuth login process for Spotify by redirecting the user to the Spotify authorization page.
+ *
+ * @param req - The request object.
+ * @param res - The response object.
+ * @param next - The next middleware function.
+ * @returns A redirect response to the Spotify authorization page.
+ */
 AuthController.initiateOauthLogin = (req, res, next) => {
   const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = process.env;
 
-  //Set random key from which token will be seeded
+  // Set random key from which token will be seeded
   const state = generateRandomString(16);
   res.cookie(STATE_KEY, state);
 
@@ -36,6 +44,15 @@ AuthController.initiateOauthLogin = (req, res, next) => {
   );
 };
 
+/**
+ * Handles the callback path for Spotify authentication.
+ * Verifies the state, exchanges the authorization code for an access token and a refresh token,
+ * and sets cookies for the tokens.
+ *
+ * @param req - The request object.
+ * @param res - The response object.
+ * @param next - The next middleware function.
+ */
 AuthController.handleCallback = (req, res, next) => {
   console.log('Reached callback path...');
   const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = process.env;
@@ -79,7 +96,9 @@ AuthController.handleCallback = (req, res, next) => {
   })
     .then((result) => result.json())
     .then((result) => {
-      res.cookie('access_token', result.access_token);
+      res.cookie('access_token', result.access_token, {
+        maxAge: result.expires_in * 999
+      });
       res.cookie('refresh_token', result.refresh_token);
       return next();
     })
@@ -95,6 +114,15 @@ AuthController.handleCallback = (req, res, next) => {
     });
 };
 
+/**
+ * Middleware function to check if the user is authorized to access the Spotify API.
+ * If the user has an access token, the function proceeds to the next middleware.
+ * If the user has a refresh token, the function refreshes the access token and sets it as a cookie.
+ * If the user has neither token, the function redirects the user to the previous page with a 403 status code.
+ * @param req - The request object.
+ * @param res - The response object.
+ * @param next - The next middleware function.
+ */
 AuthController.checkAuth = (req, res, next) => {
   const { access_token, refresh_token } = req.cookies;
   const { CLIENT_ID, CLIENT_SECRET } = process.env;
@@ -120,7 +148,7 @@ AuthController.checkAuth = (req, res, next) => {
       .then((resp) => resp.json())
       .then((result) => {
         res.cookie('access_token', result.access_token, {
-          maxAge: result.expires_in * 1000
+          maxAge: result.expires_in * 999
         });
         req.cookies['access_token'] = result.access_token;
 
@@ -141,6 +169,13 @@ AuthController.checkAuth = (req, res, next) => {
   }
 };
 
+/**
+ * Clears the access_token, refresh_token, and state_key cookies from the response object.
+ *
+ * @param req - The request object.
+ * @param res - The response object.
+ * @param next - The next middleware function.
+ */
 AuthController.logout = (req, res, next) => {
   res.clearCookie('access_token');
   res.clearCookie('refresh_token');

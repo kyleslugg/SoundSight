@@ -11,23 +11,17 @@ import {
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 
-export function ResponsiveDrawer(props: {
+export function ToggleableDrawer(props: {
   drawerWidth: number;
+  open: boolean;
+  anchor: 'top' | 'bottom' | 'left' | 'right';
+  onClose: (ev: Event, reason: string) => void;
   window?: () => Window;
 }) {
-  const { drawerWidth, window } = props;
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
+  const { drawerWidth, open, anchor, onClose } = props;
 
   const drawer = (
     <div>
-      <Toolbar />
       <Divider />
       <List>
         <ListItem key={'home'} disablePadding>
@@ -44,6 +38,13 @@ export function ResponsiveDrawer(props: {
             </ListItemButton>
           </Link>
         </ListItem>
+        <ListItem key={'playlistAnalyzer'} disablePadding>
+          <Link to="/playlistAnalyzer">
+            <ListItemButton>
+              <ListItemText primary="Playlist Analyzer" />
+            </ListItemButton>
+          </Link>
+        </ListItem>
       </List>
     </div>
   );
@@ -52,31 +53,19 @@ export function ResponsiveDrawer(props: {
     <Box
       component="nav"
       sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-      aria-label="mailbox folders"
     >
-      {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
       <Drawer
-        container={container}
         variant="temporary"
-        open={mobileOpen}
-        onClose={handleDrawerToggle}
+        open={open}
+        anchor={anchor}
+        onClose={onClose}
         ModalProps={{
           keepMounted: true // Better open performance on mobile.
         }}
         sx={{
-          display: { xs: 'block', sm: 'none' },
+          display: { xs: 'block', sm: 'block' },
           '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
         }}
-      >
-        {drawer}
-      </Drawer>
-      <Drawer
-        variant="permanent"
-        sx={{
-          display: { xs: 'none', sm: 'block' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
-        }}
-        open
       >
         {drawer}
       </Drawer>

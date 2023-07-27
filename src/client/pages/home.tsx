@@ -14,20 +14,29 @@ import {
   ListItemText,
   CssBaseline
 } from '@mui/material';
-import { Menu as MenuIcon } from '@mui/icons-material';
+import { ArrowForwardIos, ArrowBackIos } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import { TrackInfo, UserInfo, ArtistInfo } from '../../types';
 import { BrowserRouter, Route, Routes, Link } from 'react-router-dom';
 import TopTracks from '../components/topTracks';
-import { ResponsiveDrawer } from '../components/navigationDrawer';
+import PlaylistAnalyzer from '../components/playlistAnalyzer';
+import { ToggleableDrawer } from '../components/navigationDrawer';
 
 const drawerWidth = 240;
 
 export default function Home() {
   const [user, setUser] = useState<UserInfo | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [currDrawerWidth, setCurrDrawerWidth] = useState(0);
   const [mobile, setMobile] = useState(false);
   const [topTracks, setTopTracks] = useState<TrackInfo[]>([]);
   const [topArtists, setTopArtists] = useState<ArtistInfo[]>([]);
+
+  const toggleDrawer = (event: React.MouseEvent) => {
+    const nextState = !drawerOpen;
+    setDrawerOpen(nextState);
+    setCurrDrawerWidth(nextState ? drawerWidth : 0);
+  };
 
   /** 
    * const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -89,50 +98,55 @@ export default function Home() {
 
   return (
     <BrowserRouter>
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline>
+      <CssBaseline>
+        <ToggleableDrawer
+          drawerWidth={drawerWidth}
+          open={drawerOpen}
+          anchor="left"
+          onClose={(ev, reason) => {
+            toggleDrawer();
+          }}
+        />
+
+        <Box
+          sx={{
+            display: 'flex',
+            flexGrow: 1,
+            width: `calc(100% - ${currDrawerWidth}px)`,
+            ml: `${currDrawerWidth}px`
+          }}
+        >
           <AppBar
             position="fixed"
             sx={{
-              width: `calc(100% - ${drawerWidth}px)`,
-              ml: `${drawerWidth}px`
+              width: `calc(100% - ${currDrawerWidth}px)`,
+              ml: `${currDrawerWidth}px`,
+              display: 'flex',
+              justifyContent: 'space-between',
+              flexDirection: 'row'
             }}
           >
-            <Toolbar>
-              {mobile && (
-                <IconButton
-                  size="large"
-                  edge="start"
-                  color="inherit"
-                  aria-label="menu"
-                  sx={{ mr: 2 }}
-                >
-                  <MenuIcon />
-                </IconButton>
-              )}
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                Welcome{user ? `, ${user.id}` : '!'}
-              </Typography>
-              <Button onClick={handleLogout}>Log Out</Button>
-            </Toolbar>
+            <Button onClick={toggleDrawer}>
+              {drawerOpen ? <ArrowBackIos /> : <ArrowForwardIos />}
+            </Button>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Welcome{user ? `, ${user.id}` : '!'}
+            </Typography>
+            <Button onClick={handleLogout}>Log Out</Button>
           </AppBar>
-          <ResponsiveDrawer drawerWidth={drawerWidth} />
-
-          <Box>
-            <Toolbar />
-            <Routes>
-              <Route
-                path="/"
-                element={<TopTracks displayLength={20} tracks={topTracks} />}
-              />
-              <Route
-                path="topTracks"
-                element={<TopTracks displayLength={20} tracks={topTracks} />}
-              />
-            </Routes>
-          </Box>
-        </CssBaseline>
-      </Box>
+          <Routes>
+            <Route
+              path="/"
+              element={<TopTracks displayLength={20} tracks={topTracks} />}
+            />
+            <Route
+              path="topTracks"
+              element={<TopTracks displayLength={20} tracks={topTracks} />}
+            />
+            <Route path="playlistAnalyzer" element={<PlaylistAnalyzer />} />
+          </Routes>
+        </Box>
+      </CssBaseline>
     </BrowserRouter>
   );
 }

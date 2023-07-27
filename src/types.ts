@@ -13,6 +13,7 @@ export type MiddlewareController = {
 
 export type OptionalInfoElement =
   | string
+  | boolean
   | number
   | ArtistInfo
   | AlbumInfo
@@ -23,7 +24,7 @@ export type OptionalInfoElement =
 
 export type UserInfo = {
   id: string;
-  [s: string]: string | number;
+  [s: string]: string | number | OptionalInfoElement;
 };
 
 export type TrackInfo = {
@@ -48,5 +49,19 @@ export type AlbumInfo = {
   id: string;
   uri: string;
   href: string;
+  [s: string]: OptionalInfoElement;
+};
+
+export type PlaylistInfo = {
+  name: string;
+  collaborative: boolean;
+  description: string;
+  href: string;
+  id: string;
+  images: OptionalInfoElement;
+  owner: UserInfo;
+  public: boolean;
+  tracks?: { href: string; total: number };
+  uri: string;
   [s: string]: OptionalInfoElement;
 };

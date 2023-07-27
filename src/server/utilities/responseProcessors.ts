@@ -1,4 +1,5 @@
-import { AlbumInfo, ArtistInfo, TrackInfo } from '../../types';
+import { PlaylistAddCheck } from '@mui/icons-material';
+import { AlbumInfo, ArtistInfo, PlaylistInfo, TrackInfo } from '../../types';
 
 export const extractAlbumInfo = (album: AlbumInfo): AlbumInfo => {
   return {
@@ -46,4 +47,36 @@ export const processTopResponse = async (
   } else {
     return content.map((artist: ArtistInfo) => extractArtistInfo(artist));
   }
+};
+
+export const processPlaylistResponse = async (resp: Response) => {
+  const fetchAllSegments = async (href: string) => {
+    let content = await fetch(href).then((resp) => resp.json());
+    contentCache.push(...content.items);
+    if (content.next) {
+      fetchAllSegments(content.next);
+    }
+  };
+
+  const contentCache = [];
+  let content = await resp.json();
+  contentCache.push(...content.items);
+  if (content.next) {
+    fetchAllSegments(content.next);
+  }
+
+  return contentCache.map((playlist: PlaylistInfo) => {
+    return {
+      name: playlist.name,
+      description: playlist.description,
+      id: playlist.id,
+      href: playlist.href,
+      tracks_href: playlist.tracks?.href,
+      tracks_total: playlist.tracks?.total,
+      uri: playlist.uri,
+      snapshot_id: playlist.snapshot_id,
+      collaborative: playlist.collaborative,
+      owner: playlist.owner
+    };
+  });
 };
