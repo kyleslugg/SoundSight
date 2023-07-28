@@ -1,8 +1,16 @@
 import { MiddlewareController, MiddlewareErrorCreator } from '../../types';
 import {
-  processTopResponse,
-  processPlaylistResponse
+  processTracksResponse,
+  processArtistsResponse,
+  processPlaylistsResponse,
+  processPlaylistDetailResponse
 } from '../utilities/responseProcessors.ts';
+
+import {
+  getTrackAudioFeatures,
+  getTrackDetails,
+  getTrackAudioAnalysis
+} from '../utilities/trackAudioDetailGetters.ts';
 
 const createError = (err: MiddlewareErrorCreator) => {
   const thisMessage = err.message ? err.message : err.log;
@@ -79,10 +87,17 @@ SpotifyController.getTop = (req, res, next) => {
   })
     //.then((resp) => resp.json())
     .then((resp) => {
-      processTopResponse(resp, type).then((resp) => {
-        res.locals.tops = resp;
-        return next();
-      });
+      if (type === 'tracks') {
+        processTracksResponse(resp, access_token).then((resp) => {
+          res.locals.tracks = resp;
+          return next();
+        });
+      } else {
+        processArtistsResponse(resp).then((resp) => {
+          res.locals.artists = resp;
+          return next();
+        });
+      }
     });
 };
 
@@ -116,12 +131,34 @@ SpotifyController.getUserPlaylists = (req, res, next) => {
       Authorization: `Bearer ${access_token}`
     }
   })
-    .then((resp) => processPlaylistResponse(resp, access_token))
+    .then((resp) => processPlaylistsResponse(resp, access_token))
     .then((resp) => {
       // Store processed playlist data in response object
       res.locals.playlistData = resp;
       return next();
     });
+};
+
+SpotifyController.getPlaylistDetails = (req, res, next) => {
+  const { playlistId } = req.params;
+  const { access_token } = req.cookies;
+
+  if (!playlistId) {
+    return next(
+      createError({
+        method: 'getPlaylistDetails',
+        log: 'No Playlist ID provided. Cannot fetch details.',
+        status: 400
+      })
+    );
+  }
+
+  fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${access_token}`
+    }
+  }).then((resp) => processPlaylistDetailResponse(resp, access_token));
 };
 
 export default SpotifyController;

@@ -18,7 +18,11 @@ SpotifyRouter.get(
   AuthController.checkAuth,
   SpotifyController.getTop,
   (req, res) => {
-    return res.status(200).json(res.locals.tops);
+    if (req.params.type === 'tracks') {
+      return res.status(200).json(res.locals.tracks);
+    } else {
+      return res.status(200).json(res.locals.artists);
+    }
   }
 );
 
@@ -30,4 +34,14 @@ SpotifyRouter.get(
     return res.status(200).json(res.locals.playlistData);
   }
 );
+
+SpotifyRouter.get(
+  '/playlists/tracks/:playlistId',
+  AuthController.checkAuth,
+  SpotifyController.getPlaylistDetails,
+  (req, res) => {
+    return res.locals.tracks;
+  }
+);
+
 export default SpotifyRouter;
