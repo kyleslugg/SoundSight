@@ -1,40 +1,10 @@
 import qs from 'node:querystring';
 import { MiddlewareController, MiddlewareErrorCreator } from '../../types';
 import { generateRandomString } from '../utilities/utils.ts';
-import {
-  BitwardenClient,
-  ClientSettings,
-  DeviceType,
-  LogLevel
-} from '@bitwarden/sdk-napi';
 
 const STATE_KEY = 'spotify_state';
 const scope =
   'user-read-private user-read-email user-top-read user-read-recently-played user-library-read playlist-read-private playlist-read-collaborative';
-
-const { BWS_ACCESS_TOKEN, REDIRECT_URI } = process.env;
-
-const bw_settings: ClientSettings = {
-  apiUrl: 'https://api.bitwarden.com',
-  identityUrl: 'https://identity.bitwarden.com',
-  userAgent: 'Bitwarden SDK',
-  deviceType: DeviceType.SDK
-};
-
-const bw_client = new BitwardenClient(bw_settings, LogLevel.Info);
-
-const result = await bw_client.loginWithAccessToken(BWS_ACCESS_TOKEN!);
-if (!result.success) {
-  throw Error('Authentication failed');
-}
-
-const CLIENT_ID = await bw_client
-  .secrets()
-  .get('f8bf6350-3c93-4faa-a962-b052011601a3');
-
-const CLIENT_SECRET = await bw_client
-  .secrets()
-  .get('8097e22e-5714-457b-8865-b05201162053');
 
 const createError = (err: MiddlewareErrorCreator) => {
   const thisMessage = err.message ? err.message : err.log;
@@ -56,6 +26,8 @@ const AuthController: MiddlewareController = {};
  * @returns A redirect response to the Spotify authorization page.
  */
 AuthController.initiateOauthLogin = (req, res, next) => {
+  const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = process.env;
+
   // Set random key from which token will be seeded
   const state = generateRandomString(16);
   res.cookie(STATE_KEY, state);
@@ -64,7 +36,7 @@ AuthController.initiateOauthLogin = (req, res, next) => {
     'https://accounts.spotify.com/authorize?' +
       qs.stringify({
         response_type: 'code',
-        client_id: CLIENT_ID!,
+        client_id: CLIENT_ID,
         scope: scope,
         redirect_uri: REDIRECT_URI,
         state: state
@@ -83,6 +55,7 @@ AuthController.initiateOauthLogin = (req, res, next) => {
  */
 AuthController.handleCallback = (req, res, next) => {
   console.log('Reached callback path...');
+  const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = process.env;
 
   const code = req.query.code || null;
   const state = req.query.state || null;
