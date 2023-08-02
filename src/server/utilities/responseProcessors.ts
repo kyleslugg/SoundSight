@@ -38,14 +38,21 @@ const fetchMultipageData = async (resp: Response, access_token: string) => {
   return contentCache;
 };
 
-export const extractAlbumInfo = (album: AlbumInfo): AlbumInfo => {
+export const extractAlbumInfo = ({
+  name,
+  id,
+  uri,
+  href,
+  release_date,
+  images
+}: AlbumInfo): AlbumInfo => {
   return {
-    title: album['name'],
-    id: album['id'],
-    uri: album['uri'],
-    href: album['href'],
-    release_date: album['release_date'],
-    images: album['images']
+    title: name,
+    id,
+    uri,
+    href,
+    release_date,
+    images
   };
 };
 
@@ -55,14 +62,21 @@ export const extractAlbumInfo = (album: AlbumInfo): AlbumInfo => {
  * @param artist - An object of type ArtistInfo containing information about an artist, including their id, uri, href, name, genres, and images.
  * @returns A new object of type ArtistInfo with only the necessary properties.
  */
-export const extractArtistInfo = (artist: ArtistInfo): ArtistInfo => {
+export const extractArtistInfo = ({
+  id,
+  uri,
+  href,
+  name,
+  genres,
+  images
+}: ArtistInfo): ArtistInfo => {
   return {
-    id: artist['id'],
-    uri: artist['uri'],
-    href: artist['href'],
-    name: artist['name'],
-    genres: artist['genres'],
-    images: artist['images']
+    id,
+    uri,
+    href,
+    name,
+    genres,
+    images
   };
 };
 

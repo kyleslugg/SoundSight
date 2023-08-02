@@ -6,12 +6,6 @@ import {
   processPlaylistDetailResponse
 } from '../utilities/responseProcessors.ts';
 
-import {
-  getTrackAudioFeatures,
-  getTrackDetails,
-  getTrackAudioAnalysis
-} from '../utilities/trackAudioDetailGetters.ts';
-
 const createError = (err: MiddlewareErrorCreator) => {
   const thisMessage = err.message ? err.message : err.log;
   return {
@@ -139,6 +133,15 @@ SpotifyController.getUserPlaylists = (req, res, next) => {
     });
 };
 
+/**
+ * Fetches the details of a Spotify playlist using the playlist ID and access token provided in the request.
+ * Processes the response and returns the track details of the playlist.
+ *
+ * @param req - The request object containing the playlist ID and access token.
+ * @param res - The response object.
+ * @param next - The next middleware function.
+ * @returns The track details of the playlist.
+ */
 SpotifyController.getPlaylistDetails = (req, res, next) => {
   const { playlistId } = req.params;
   const { access_token } = req.cookies;
