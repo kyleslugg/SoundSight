@@ -18,9 +18,7 @@ jobs:
         with:
           access_token: ${{ secrets.BWS_ACCESS_TOKEN }}
           secrets: |
-            1e42d83f-63d9-41d0-9c5a-b052011d28e2 > OCO_OPENAI_KEY
-      - name: Check Secrets
-        run: echo $OCO_OPENAI_KEY
+            1e42d83f-63d9-41d0-9c5a-b052011d28e2 > OCO_OPENAI_API_KEY
       - name: Setup Node.js Environment
         uses: actions/setup-node@v2
         with:
@@ -36,7 +34,7 @@ jobs:
           # set openAI api key in repo actions secrets,
           # for openAI keys go to: https://platform.openai.com/account/api-keys
           # for repo secret go to: <your_repo_url>/settings/secrets/actions
-          OCO_OPENAI_API_KEY: $OCO_OPENAI_KEY
+          #OCO_OPENAI_API_KEY: $OCO_OPENAI_KEY
 
           # customization
           OCO_OPENAI_MAX_TOKENS: 500
