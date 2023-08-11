@@ -1,5 +1,5 @@
 {
-  "name": "soundsightsvelte",
+  "name": "soundsight",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -12,11 +12,10 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^2.0.0",
-    "@sveltejs/kit": "^1.20.4",
     "@types/cookie-parser": "^1.4.3",
     "@types/express": "^4.17.17",
     "nodemon": "^3.0.1",
+    "sass": "^1.65.1",
     "svelte": "^4.0.5",
     "svelte-check": "^3.4.3",
     "tslib": "^2.4.1",
@@ -25,6 +24,12 @@
   },
   "type": "module",
   "dependencies": {
+    "@auth/core": "^0.11.1",
+    "@auth/sveltekit": "^0.3.6",
+    "@sveltejs/adapter-auto": "^2.0.0",
+    "@sveltejs/kit": "^1.20.4",
+    "@svelteuidev/composables": "^0.14.0",
+    "@svelteuidev/core": "^0.14.0",
     "concurrently": "^8.2.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
