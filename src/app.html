@@ -6,7 +6,17 @@
     <meta name="viewport" content="width=device-width" />
     %sveltekit.head%
   </head>
-  <body data-sveltekit-preload-data="hover">
+  <body
+    data-sveltekit-preload-data="hover"
+    style="background-color: #1a1b1e; color: #c1c2c5"
+  >
     %sveltekit.body%
+    <noscript
+      ><style>
+        body {
+          visibility: visible;
+        }
+      </style></noscript
+    >
   </body>
 </html>

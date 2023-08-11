@@ -15,7 +15,9 @@
     <h3>Login with Spotify</h3>
   </Text>
 
-  <Button color="dark" size="xl" style="display: block">
-    <Image src={Logo} height={40} />
-  </Button>
+  <a href="/auth/login">
+    <Button color="dark" size="xl" style="display: block">
+      <Image src={Logo} height={40} />
+    </Button>
+  </a>
 </Card>
