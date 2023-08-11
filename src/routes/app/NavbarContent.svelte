@@ -15,7 +15,6 @@
     padding: 15px;
     display: flex;
     flex-direction: column;
-    height: 100%;
     border-right: 0.5pt solid rgb(15, 14, 14);
     justify-content: center;
   }

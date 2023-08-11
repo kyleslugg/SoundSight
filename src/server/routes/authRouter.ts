@@ -15,7 +15,7 @@ AuthenticationRouter.get(
 );
 
 AuthenticationRouter.get('/logout', AuthController.logout, (req, res) => {
-  return res.redirect('back');
+  return res.redirect('/');
 });
 
 export default AuthenticationRouter;
