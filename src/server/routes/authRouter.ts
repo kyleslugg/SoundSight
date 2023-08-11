@@ -10,7 +10,7 @@ AuthenticationRouter.get(
   '/callback',
   AuthController.handleCallback,
   (req: Request, res: Response) => {
-    return res.redirect('back');
+    return res.redirect('/app');
   }
 );
 

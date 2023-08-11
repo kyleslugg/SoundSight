@@ -1,0 +1,19 @@
+$bkg-base: #1a1b1e;
+$text-base: #c1c2c5;
+$bkg-secondary: lighten($bkg-base, 100);
+
+:root,
+body,
+#SVELTEUI_PROVIDER {
+  /* this will apply to <body> */
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: $bkg-base;
+  color: $text-base;
+}
+
+main {
+  margin: auto;
+  height: 100%;
+}
