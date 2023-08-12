@@ -4,7 +4,7 @@
   import Login from './Login.svelte';
 
   let data;
-  let loggedIn = data;
+  let loggedIn = { data };
 </script>
 
 <Center override={{ height: '100%' }}>
