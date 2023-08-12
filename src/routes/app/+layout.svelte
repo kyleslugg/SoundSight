@@ -1,8 +1,6 @@
 <script lang="ts">
   import { fns, AppShell, Navbar, Header, Container } from '@svelteuidev/core';
   import NavbarContent from './NavbarContent.svelte';
-  let data: { [k: string]: unknown } | undefined;
-  let loggedIn = data ? data.loggedIn! : false;
 </script>
 
 <Container
