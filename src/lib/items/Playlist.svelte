@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Image, Title, Text } from '@svelteuidev/core';
-  import type { TrackInfo } from '../../types';
-  export let itemData: TrackInfo;
+  import type { PlaylistInfo } from '../../types';
+  export let itemData: PlaylistInfo;
 
   let { title, album, artists, name, uri } = itemData;
   //@ts-expect-error

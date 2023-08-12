@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fns, AppShell, Navbar, Header, Container } from '@svelteuidev/core';
   import NavbarContent from './NavbarContent.svelte';
+  export let data;
 </script>
 
 <Container
@@ -13,7 +14,7 @@
     'background-color': '$dark600'
   }}
 >
-  <NavbarContent />
+  <NavbarContent userData={data.userData} />
   <main style="flex-grow: 1;">
     <slot height="100%" />
   </main>

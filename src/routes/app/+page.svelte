@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { Center } from '@svelteuidev/core';
   import ItemDisplay from '$lib/ItemDisplay.svelte';
   import type { TrackInfo } from '../../types.js';
   export let data;
+
   let topTracks: TrackInfo[] = data ? data.topTracks! : [];
 </script>
 

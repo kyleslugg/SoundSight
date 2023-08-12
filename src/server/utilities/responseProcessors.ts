@@ -145,7 +145,7 @@ export const processTracksResponse = async (
 
   //@ts-expect-error
   trackDetails.sort((a, b) => a.ind - b.ind);
-  console.log(trackDetails);
+  //console.log(trackDetails);
   return trackDetails;
 };
 

@@ -1,18 +1,10 @@
 <script lang="ts">
-  import type {
-    AlbumInfo,
-    ArtistInfo,
-    PlaylistInfo,
-    TrackInfo
-  } from '../types';
+  import type { ItemInfo, SpotifyItem } from '../types';
+  import Item from './items/Item.svelte';
 
-  import Item from './items/items';
-
-  export let itemsData: TrackInfo[];
-  export let itemType: 'track' | 'artist' | 'playlist' | 'album';
+  export let itemsData: ItemInfo[];
+  export let itemType: SpotifyItem;
   export let title: string;
-
-  const ItemEl = Item(itemType);
 </script>
 
 <div class="items-display">
@@ -21,7 +13,7 @@
   <div class="items-holder">
     <div>
       {#each itemsData as item}
-        <ItemEl itemData={item} />
+        <Item itemData={item} {itemType} />
       {/each}
     </div>
   </div>

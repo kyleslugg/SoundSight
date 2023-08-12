@@ -1,6 +1,11 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { PlaylistInfo, UserInfo, ArtistInfo, TrackInfo } from '../types';
+import type {
+  PlaylistInfo,
+  UserInfo,
+  ArtistInfo,
+  TrackInfo
+} from '../../types';
 
 //Create user slice
 

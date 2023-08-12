@@ -5,6 +5,6 @@ export function load({ cookies }) {
   if (access_token) {
     throw redirect(307, '/app');
   } else {
-    return { loggedIn: true };
+    return { loggedIn: false };
   }
 }
