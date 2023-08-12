@@ -36,7 +36,6 @@ SpotifyController.getUserInfo = (req, res, next) => {
   })
     .then((resp) => resp.json())
     .then((resp) => {
-      console.log(resp);
       res.locals.response = resp;
       return next();
     })

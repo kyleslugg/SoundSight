@@ -64,3 +64,7 @@ export type PlaylistInfo = {
   uri: string;
   [s: string]: OptionalInfoElement;
 };
+
+export type ItemInfo = TrackInfo | PlaylistInfo | ArtistInfo | AlbumInfo;
+
+export type SpotifyItem = 'track' | 'artist' | 'playlist' | 'album';

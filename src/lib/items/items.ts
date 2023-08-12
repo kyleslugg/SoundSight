@@ -2,20 +2,49 @@ import Track__SvelteComponent_ from './Track.svelte';
 import Album__SvelteComponent_ from './Album.svelte';
 import Artist__SvelteComponent_ from './Artist.svelte';
 import Playlist__SvelteComponent_ from './Playlist.svelte';
+import type {
+  ItemInfo,
+  TrackInfo,
+  AlbumInfo,
+  ArtistInfo,
+  PlaylistInfo
+} from '../../types';
 
-export default function Item(type: 'track' | 'artist' | 'playlist' | 'album') {
+type ItemComponent =
+  | typeof Track__SvelteComponent_
+  | typeof Album__SvelteComponent_
+  | typeof Artist__SvelteComponent_
+  | typeof Playlist__SvelteComponent_
+  | undefined;
+
+export default function getItemElement(
+  type: 'track' | 'artist' | 'playlist' | 'album',
+  itemData: ItemInfo
+): { ItemEl: ItemComponent; TypedData: ItemInfo } | undefined {
   switch (type) {
     case 'track':
-      return Track__SvelteComponent_;
+      return {
+        ItemEl: Track__SvelteComponent_,
+        TypedData: itemData as TrackInfo
+      };
 
     case 'album':
-      return Album__SvelteComponent_;
+      return {
+        ItemEl: Album__SvelteComponent_,
+        TypedData: itemData as AlbumInfo
+      };
 
     case 'artist':
-      return Artist__SvelteComponent_;
+      return {
+        ItemEl: Artist__SvelteComponent_,
+        TypedData: itemData as ArtistInfo
+      };
 
     case 'playlist':
-      return Playlist__SvelteComponent_;
+      return {
+        ItemEl: Playlist__SvelteComponent_,
+        TypedData: itemData as PlaylistInfo
+      };
 
     default:
       break;

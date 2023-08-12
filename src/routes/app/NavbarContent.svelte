@@ -1,12 +1,17 @@
 <script lang="ts">
   import { Anchor, Center } from '@svelteuidev/core';
+  import type { UserInfo } from '../../types';
+  export let userData: UserInfo;
 </script>
 
 <nav>
+  <div>
+    <h2>Welcome, {userData.id}</h2>
+  </div>
   <a href="/">Home</a>
-  <a href="/tracks">Top Tracks</a>
-  <a href="/playlists">Playlists</a>
-  <a href="/analysis">Analyze</a>
+  <a href="/app/tracks">Top Tracks</a>
+  <a href="/app/playlists">Playlists</a>
+  <a href="/app/analysis">Analyze</a>
 </nav>
 
 <style>
