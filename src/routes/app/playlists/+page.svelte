@@ -1,5 +1,6 @@
 <script lang="ts">
+  import Sliders from './Sliders.svelte';
   export let data;
 </script>
 
-<p>{JSON.stringify(data.userPlaylists)}</p>
+<Sliders />
